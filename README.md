@@ -19,7 +19,7 @@ Various configurations and hyperparameters of the base models were experimented 
 
 A linear regression model was fitted using the OOF predictions from the individual models, which determines the models' contributions to the ensemble. The ensemble improved the OOF AUROC to **0.7537**.
 
-Model and ensemble details can be found in `development_notebooks\model_training`
+Model and ensemble details can be found in `development_notebooks/model_training`
 
 ## <a id='2'> 2. Data Pre-processing </a>
 
@@ -36,12 +36,13 @@ Model and ensemble details can be found in `development_notebooks\model_training
 - Rolling Max of the sensor-based features (10 seconds rolling time frame) to retain the spikes in sensors' values over the next 10 seconds.
 - Null values between timestamps were interpolated linearly
 
-### Feature Engineering
+### Feature Engineering & Selection
 
 - `Turning Aggression` - The product of Angular Frequency and Speed, in log scale. The higher the combined magnitude of speed and angular frequency, the more aggressive the turn, as the driver did not slow down the vehicle while turning.
 - `Magnitude of Acceleration X & Y` - Similar to turning aggression, but measured by the accelerometer.
 - `Acceleration (derived)` - The acceleration calculated using vehicle Speed over recorded time stamp.
-- Feature statistics - The mean, median, max, skewness and kurtosis of the processed features (group by bookingID) were generated.
+- Feature statistics - The mean, median, max, skewness and kurtosis of the selected features (group by bookingID) were generated.
+- Feature selection - Iterative elimination and addition of features were conducted with 4 runs of base model (LSTM) which provides a quick gauge on the features performance. Features that led to model deterioration or insignificant improvements were dropped. The complete set of model performance and features configurations is available as an excel sheet in `development_notebooks/model_training/feature_selection_using_lstm_baseline.xlsx`
 
 ### Features/ Approaches explored but not used (led to deterioration/ insignificant improvements)
 - Correction of `Acceleration X and Y`. This is because the previous XYZ correction results in indeterminate direction of the corrected X and Y (resultant X and Y are orthogonal to Z, but might not be pointing to perpendicular or parallel to the direction of vehicle travel). 
@@ -51,9 +52,11 @@ Model and ensemble details can be found in `development_notebooks\model_training
 - Feature - `Angular Frequency`. This is the 1st derivative of Bearing or the rate of change of bearing direction. High angular frequency is associated with sudden turns.
 
 
-### Data Standardization and Training Scheme
+### Data Standardization & Training Scheme
 
 Data were split into the 5 folds using stratified sampling (for stratified 5-fold cross validation). For each fold, a standardization scaler was fitted using the training data, before the fitted means and scales were applied on the validation data. This ensures no data leakage to the validation set. For ease of loading and model training, each of the data are prepared and stored separately.
+
+Complete preprocessing pipeline and data preparation can be found in `development_notebooks/feature_preprocessing_engineering/`
 
 ## <a id='3'> 3. How to Predict on New Dataset </a>
 
