@@ -25,30 +25,30 @@ Model and ensemble details can be found in `development_notebooks\model_training
 
 ### Data Cleaning & Transformation
 
-- Removed bookingIDs with duplicated labels
+- Removed `bookingIDs` with duplicated labels
 - Shifted bookingIDs' start time to 0 and adjusted subsequent time stamps accordingly
 - Removed timestamps greater than 1800 seconds - 30 mins is more than enough to tell you if the driver is dangerous or not
 - Clipped the maximum `Speed` to 35 m/s, which is equivalent to 126 km/h - The speed limit on most expressways in Singapore is only 90 km/h 
-- Corrected the coordinates reference system (from phone to vehicle) using median values of Acceleration X, Y, Z and applied correction to Acceleration X, Y, Z and Gyro X, Y, Z. 
+- Corrected the coordinates reference system (from phone to vehicle) using median values of `Acceleration X, Y, Z` and applied correction to `Acceleration X, Y, Z` and `Gyro X, Y, Z`. 
   This corrected features are more representative of the driver's behaviour (Z - vehicle bouncing, X - braking/ acceleration, Y - turning speed).
-- Corrected the magnitude of Acceleration X, Y, Z by obtaining the G-multiplier on Z axis, using absolute gravitational force of 9.81 m/s^2. This helps to solve the issue where certain phones' accelerometer magnitude are 4x more than the grativational force.
+- Corrected the magnitude of `Acceleration X, Y, Z` by obtaining the G-multiplier on Z axis, using absolute gravitational force of 9.81 m/s^2. This helps to solve the issue where certain phones' accelerometer magnitude are 4x more than the grativational force.
 - Rolling Mean of the sensor-based features (10 seconds rolling time frame) to smooth out the sensors' inherent inaccuracies.
 - Rolling Max of the sensor-based features (10 seconds rolling time frame) to retain the spikes in sensors' values over the next 10 seconds.
 - Null values between timestamps were interpolated linearly
 
 ### Feature Engineering
 
-- Turning Aggression - The product of Angular Frequency and Speed, in log scale. The higher the combined magnitude of speed and angular frequency, the more aggressive the turn, as the driver did not slow down the vehicle while turning.
-- Magnitude of Acceleration X & Y - Similar to turning aggression, but measured by the accelerometer.
-- Acceleration (derived) - The acceleration calculated using vehicle Speed over recorded time stamp.
+- `Turning Aggression` - The product of Angular Frequency and Speed, in log scale. The higher the combined magnitude of speed and angular frequency, the more aggressive the turn, as the driver did not slow down the vehicle while turning.
+- `Magnitude of Acceleration X & Y` - Similar to turning aggression, but measured by the accelerometer.
+- `Acceleration (derived)` - The acceleration calculated using vehicle Speed over recorded time stamp.
 - Feature statistics - The mean, median, max, skewness and kurtosis of the processed features (group by bookingID) were generated.
 
 ### Features/ Approaches explored but not used (led to deterioration/ insignificant improvements)
-- Correction of Acceleration X and Y. This is because the previous XYZ correction results in indeterminate direction of the corrected X and Y (resultant X and Y are orthogonal to Z, but might not be pointing to perpendicular or parallel to the direction of vehicle travel). 
-- Feature - Use Phone While Driving. This is a boolean feature where 1 signifies driver used phone while driving and 0 signifies driver did not use phone while driving. It is derived from the corrected Acceleration Z, where the Z value is less than 7 m/s^2 or more than 13 m/s^2 when Speed is non-zero. The high change in Z value happens when phones are moved from their stable position (phone stand) and signifies that the driver is using phone when driving.
-- Feature - Using Phone. Similar to the above, but it is tied to the time stamp, 1 signifies driver using phone at the timestamp, 0 otherwise.
-- Feature - Jerk rate. This is the 2nd derivative of Speed or the rate of change of acceleration. High jerk rate typically signifies unstable ride resulted from sudden change of direction, braking or acceleration.
-- Feature - Angular frequency. This is the 1st derivative of Bearing or the rate of change of bearing direction. High angular frequency is associated with sudden turns.
+- Correction of `Acceleration X and Y`. This is because the previous XYZ correction results in indeterminate direction of the corrected X and Y (resultant X and Y are orthogonal to Z, but might not be pointing to perpendicular or parallel to the direction of vehicle travel). 
+- Feature - `Use Phone While Driving`. This is a boolean feature where 1 signifies driver used phone while driving and 0 signifies driver did not use phone while driving. It is derived from the corrected `Acceleration Z`, where the Z value is less than 7 m/s^2 or more than 13 m/s^2 when Speed is non-zero. The high change in Z value happens when phones are moved from their stable position (phone stand) and signifies that the driver is using phone when driving.
+- Feature - `Using Phone`. Similar to the above, but it is tied to the time stamp, 1 signifies driver using phone at the timestamp, 0 otherwise.
+- Feature - `Jerk Rate`. This is the 2nd derivative of Speed or the rate of change of acceleration. High jerk rate typically signifies unstable ride resulted from sudden change of direction, braking or acceleration.
+- Feature - `Angular Frequency`. This is the 1st derivative of Bearing or the rate of change of bearing direction. High angular frequency is associated with sudden turns.
 
 
 ### Data Standardization and Training Scheme
@@ -80,3 +80,6 @@ Data were split into the 5 folds using stratified sampling (for stratified 5-fol
 - Step 6 : Run the Python file in the base directory and the predictions will be saved on your base directory as 'ensemble_predictions.csv'
 
   `python preprocess_and_predict.py`
+  
+  #### Prepared by Chew Ze Yong
+  Email : zychew1@e.ntu.edu.sg
