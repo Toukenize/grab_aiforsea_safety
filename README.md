@@ -50,6 +50,25 @@ Model and ensemble details can be found [**here**](https://github.com/Toukenize/
 ![image](https://user-images.githubusercontent.com/43180977/59551962-db240680-8fb3-11e9-9a00-c21f2f3c626e.png)
 The complete set of model performance and features configurations is available as an excel sheet [**here**](https://github.com/Toukenize/grab_aiforsea_safety/blob/master/development_notebooks/model_training/feature_selection_using_lstm_baseline.xlsx).
 
+### Selected Features
+
+These are the features selected for LSTM and CNN. Their bookingID-wise statistics were used for LGBM.
+
+| No. | Feature                         |
+|:---:|:------------------------------- |
+|  1  | Accuracy                        |
+|  2  | Acc_Z                           |
+|  3  | Speed                           |
+|  4  | Acc_derived                     |
+|  5  | Acc_Z_moving_mean               |
+|  6  | Speed_moving_mean               |
+|  7  | Acc_derived_moving_mean         |
+|  8  | Acc_Z_moving_max                |
+|  9  | Speed_moving_max                |
+|  10 | Acc_derived_moving_max          |
+|  11 | Acc_XY_magnitude                |
+|  12 | Turning_aggression_moving_mean  |
+
 ### Features/ Approaches explored but not used (led to deterioration/ insignificant improvements)
 - Correction of `Acceleration X and Y`. This is because the previous XYZ correction results in indeterminate direction of the corrected X and Y (resultant X and Y are orthogonal to Z, but might not be pointing to perpendicular or parallel to the direction of vehicle travel). 
 - Feature - `Use Phone While Driving`. This is a boolean feature where 1 signifies driver used phone while driving and 0 signifies driver did not use phone while driving. It is derived from the corrected `Acceleration Z`, where the Z value is less than 7 m/s^2 or more than 13 m/s^2 when Speed is non-zero. The high change in Z value happens when phones are moved from their stable position (phone stand) and signifies that the driver is using phone when driving.
